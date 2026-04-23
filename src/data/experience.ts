@@ -10,27 +10,27 @@ export interface Experience {
 export const experiences: Experience[] = [
   {
     period: "2024 - Présent",
-    title: "Créateur de SaaS & Freelance",
-    company: "Benewende.dev",
+    title: "Fondateur & CEO",
+    company: "OpenBaara Corp",
     description:
-      "Développement de produits SaaS et accompagnement clients sur des projets web ambitieux.",
+      "Création et direction de plusieurs ventures tech (Baarali, OpenBaara, Outio) avec une vision centrée sur l'IA et l'écosystème africain.",
     achievements: [
-      "3 SaaS déployés en production",
-      "10+ clients accompagnés",
-      "98% de satisfaction client",
+      "Lancement de Baarali : orchestration d'agents IA en production",
+      "Construction d'OpenBaara : communauté tech africaine",
+      "Développement d'Outio : productivité pour équipes distantes",
     ],
     current: true,
   },
   {
     period: "2022 - 2024",
-    title: "Développeur Full Stack Senior",
-    company: "Tech Company",
+    title: "Développeur Full Stack Senior & Lead Tech",
+    company: "Indépendant / Freelance",
     description:
-      "Lead technique sur des projets d'envergure avec une équipe de développeurs.",
+      "Développement de produits SaaS et accompagnement clients sur des projets web ambitieux avant la création d'OpenBaara Corp.",
     achievements: [
       "Architecture de 5 plateformes à fort trafic",
-      "Lead technique d'une équipe de 3 développeurs",
-      "Réduction temps de chargement de 40%",
+      "3 SaaS déployés en production",
+      "Lead technique d'équipes distribuées",
     ],
   },
   {

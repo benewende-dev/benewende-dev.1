@@ -25,19 +25,75 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: "baarali",
+    name: "Baarali",
+    description:
+      "Plateforme d'orchestration d'agents IA pour entreprises. Gouvernance, tâches et coordination multi-agents en temps réel.",
+    longDescription:
+      "Baarali est une plateforme de contrôle d'entreprise pilotée par l'IA qui permet de recruter, orchestrer et superviser des agents intelligents. Elle offre un système de gouvernance, d'assignation de tâches, de suivi de progression et de coordination entre agents humains et artificiels.",
+    image: "/projects/baarali.png",
+    featured: true,
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "PostgreSQL", "OpenAI", "Node.js"],
+    status: "live",
+    category: "saas",
+    liveUrl: "https://baarali.com",
+    stats: { users: "Entreprises", performance: "99.9%", roi: "10x" },
+  },
+  {
+    id: "openbaara",
+    name: "OpenBaara",
+    description:
+      "Écosystème open-source et SaaS pour la gestion de communautés tech et de projets collaboratifs.",
+    longDescription:
+      "OpenBaara est une suite d'outils open-source et une plateforme SaaS dédiée à l'accompagnement des développeurs et créateurs africains. Elle centralise les ressources, la formation, la collaboration sur des projets tech et l'accès à des opportunités.",
+    image: "/projects/openbaara.png",
+    featured: true,
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "Stripe", "Vercel"],
+    status: "live",
+    category: "saas",
+    liveUrl: "https://openbaara.com",
+    stats: { users: "Communauté", performance: "99.9%", roi: "5x" },
+  },
+  {
+    id: "outio",
+    name: "Outio",
+    description:
+      "Application de productivité et gestion de tâches pensée pour les équipes distantes en Afrique.",
+    longDescription:
+      "Outio est une application web et mobile de productivité qui adapte les meilleures pratiques de gestion de projet aux réalités des équipes africaines : faible connectivité, paiements locaux, collaboration async et intégrations mobile money.",
+    image: "/projects/outio.png",
+    featured: true,
+    technologies: ["React Native", "Next.js", "Node.js", "MongoDB", "Redis", "WebSocket"],
+    status: "in-progress",
+    category: "mobile",
+    progress: 65,
+    launchDate: "Q3 2026",
+    stats: { users: "Beta", performance: "98%", roi: "3x" },
+  },
+  {
     id: "wenastudio",
     name: "WENA Studio",
     description:
       "Plateforme SaaS d'intelligence artificielle tout-en-un pour créateurs et entrepreneurs.",
     longDescription:
-      "WENA Studio est une plateforme SaaS complète qui centralise l'accès à des agents IA spécialisés, la génération de contenu texte, images et vidéos, ainsi que des outils de productivité avancés. Conçue pour les créateurs, marketeurs et entrepreneurs qui veulent exploiter la puissance de l'IA sans complexité technique.",
+      "WENA Studio est une plateforme SaaS complète qui centralise l'accès à des agents IA spécialisés, la génération de contenu texte, images et vidéos, ainsi que des outils de productivité avancés.",
     image: "/projects/wenastudio.png",
-    featured: true,
     technologies: ["Next.js", "TypeScript", "Tailwind CSS", "OpenAI", "Prisma", "PostgreSQL", "Vercel"],
     status: "live",
     category: "saas",
     liveUrl: "https://wenastudio.com",
     stats: { users: "1K+", performance: "99.9%", roi: "5x" },
+  },
+  {
+    id: "cv-generator",
+    name: "CV Generator IA",
+    description:
+      "Générateur de CV professionnel assisté par IA avec templates premium et export PDF.",
+    image: "/projects/cv-gen.png",
+    technologies: ["Next.js", "OpenRouter", "PDF-lib", "Framer Motion"],
+    status: "live",
+    category: "ia",
+    stats: { users: "500+", performance: "99%", roi: "2x" },
   },
   {
     id: "saas-crm",
@@ -49,83 +105,5 @@ export const projects: Project[] = [
     status: "live",
     category: "saas",
     stats: { users: "500+", performance: "99.9%", roi: "3x" },
-  },
-  {
-    id: "ai-content",
-    name: "AI Content Generator",
-    description:
-      "Outil de generation de contenu marketing propulse par IA multi-modeles.",
-    image: "/projects/ai-content.png",
-    technologies: ["React", "Node.js", "OpenAI", "MongoDB", "Redis"],
-    status: "live",
-    category: "ia",
-    stats: { users: "1.2K", performance: "98%", roi: "5x" },
-  },
-  {
-    id: "ecommerce-platform",
-    name: "E-Commerce Platform",
-    description:
-      "Marketplace multi-vendeurs avec paiements mobile money et livraison integree.",
-    image: "/projects/ecommerce.png",
-    technologies: ["Next.js", "Prisma", "Stripe", "AWS S3", "Tailwind"],
-    status: "live",
-    category: "webapp",
-    stats: { users: "2K+", performance: "97%", roi: "4x" },
-  },
-  {
-    id: "saas-analytics",
-    name: "Analytics Dashboard SaaS",
-    description:
-      "Dashboard analytics temps reel avec visualisation avancee et rapports automatises.",
-    image: "/projects/analytics.png",
-    technologies: ["Next.js", "D3.js", "PostgreSQL", "WebSocket", "Docker"],
-    status: "in-progress",
-    category: "saas",
-    progress: 75,
-    launchDate: "Q2 2026",
-  },
-  {
-    id: "mobile-fintech",
-    name: "FinTech Mobile App",
-    description:
-      "Application mobile de gestion financiere avec IA predictive pour le marche africain.",
-    image: "/projects/fintech.png",
-    technologies: ["React Native", "Node.js", "PostgreSQL", "TensorFlow"],
-    status: "in-progress",
-    category: "mobile",
-    progress: 45,
-    launchDate: "Q3 2026",
-  },
-  {
-    id: "cv-generator",
-    name: "CV Generator IA",
-    description:
-      "Generateur de CV professionnel assiste par IA avec templates premium et export PDF.",
-    image: "/projects/cv-gen.png",
-    technologies: ["Next.js", "OpenRouter", "PDF-lib", "Framer Motion"],
-    status: "in-progress",
-    category: "ia",
-    progress: 90,
-    launchDate: "Q1 2026",
-  },
-  {
-    id: "chatbot-builder",
-    name: "Chatbot Builder",
-    description:
-      "Plateforme no-code pour creer des chatbots IA connectes a vos donnees.",
-    image: "/projects/chatbot.png",
-    technologies: ["Next.js", "LangChain", "Pinecone", "OpenAI"],
-    status: "prototype",
-    category: "ia",
-  },
-  {
-    id: "devops-monitor",
-    name: "DevOps Monitor",
-    description:
-      "Outil de monitoring infrastructure avec alertes intelligentes et auto-scaling.",
-    image: "/projects/devops.png",
-    technologies: ["Go", "Docker", "Prometheus", "Grafana", "WebSocket"],
-    status: "prototype",
-    category: "prototype",
   },
 ];

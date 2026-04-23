@@ -7,16 +7,16 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 const defaultTypingTexts = [
-  "des SaaS qui résolvent de vrais problèmes",
-  "des applications web performantes",
-  "des solutions IA innovantes",
-  "des expériences digitales premium",
+  "des entreprises tech ambitieuses",
+  "des solutions IA pour l'Afrique",
+  "des SaaS qui transforment des industries",
+  "des équipes et des produits durables",
 ];
 
 const stats = [
+  { value: "3", label: " Ventures actives" },
   { value: "25+", label: "Projets livrés" },
-  { value: "3+", label: "Années d'expérience" },
-  { value: "98%", label: "Satisfaction clients" },
+  { value: "Ouaga", label: "Base opérationnelle" },
 ];
 
 interface HeroSettings {
@@ -48,7 +48,7 @@ export default function Hero() {
   const typingTexts = heroSettings.typingTexts?.length ? heroSettings.typingTexts : defaultTypingTexts;
   const isAvailable = heroSettings.available !== undefined ? heroSettings.available : true;
   const heroTitle = heroSettings.title || "Je crée";
-  const heroSubtitle = heroSettings.subtitle || "Développeur Full Stack \u00b7 Créateur de SaaS \u00b7 Expert IA";
+  const heroSubtitle = heroSettings.subtitle || "Fondateur @ OpenBaara Corp \u00b7 Développeur Full Stack \u00b7 Builder IA"
 
   useEffect(() => {
     const text = typingTexts[currentText % typingTexts.length];
