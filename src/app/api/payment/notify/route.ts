@@ -38,22 +38,34 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // If payment accepted, upgrade user
-    if (status === "ACCEPTED" && payment.plan) {
-      const updateData: { plan: string; cvCredits?: number } = {
-        plan: payment.plan,
-      };
+    // If payment accepted, activate the related resource
+    if (status === "ACCEPTED") {
+      const svc = payment.serviceType || "";
 
-      if (payment.plan === "pro") {
-        updateData.cvCredits = 1; // +1 CV credit
-      } else if (payment.plan === "business") {
-        updateData.cvCredits = 999; // unlimited
+      if (svc.startsWith("course:")) {
+        await prisma.enrollment.updateMany({
+          where: { transactionId },
+          data: { status: "active" },
+        });
+      } else if (svc.startsWith("product:")) {
+        await prisma.productPurchase.updateMany({
+          where: { transactionId },
+          data: { status: "active" },
+        });
+      } else if (payment.plan) {
+        const updateData: { plan: string; cvCredits?: number } = {
+          plan: payment.plan,
+        };
+        if (payment.plan === "pro") {
+          updateData.cvCredits = 1;
+        } else if (payment.plan === "business") {
+          updateData.cvCredits = 999;
+        }
+        await prisma.user.update({
+          where: { id: payment.userId },
+          data: updateData,
+        });
       }
-
-      await prisma.user.update({
-        where: { id: payment.userId },
-        data: updateData,
-      });
     }
 
     return NextResponse.json({ status: "OK" });

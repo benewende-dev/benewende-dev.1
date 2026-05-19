@@ -29,16 +29,17 @@ export async function POST(request: NextRequest) {
     });
 
     if (resend) {
+      const FROM = process.env.SMTP_FROM || "OpenBaara <noreply@benewende.dev>";
       // Notification to admin
       await resend.emails.send({
-        from: "Benewende.dev <noreply@benewende.dev>",
+        from: FROM,
         to: ["benewende.dev@gmail.com"],
         subject: `Nouveau message de ${name}${project ? ` - ${project}` : ""}`,
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
             <div style="background: linear-gradient(135deg, #0066FF, #0052cc); padding: 24px; border-radius: 12px 12px 0 0; color: white;">
               <h1 style="margin: 0; font-size: 20px;">Nouveau message de contact</h1>
-              <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Benewende.dev</p>
+              <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">OpenBaara · Agence digitale</p>
             </div>
             <div style="background: #f9fafb; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
               <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
 
       // Auto-reply to client
       await resend.emails.send({
-        from: "Benewende.dev <noreply@benewende.dev>",
+        from: FROM,
         to: [email],
         subject: "Merci pour votre message !",
         html: `
@@ -76,12 +77,12 @@ export async function POST(request: NextRequest) {
               ${project ? `<p style="font-size: 14px; line-height: 1.7; color: #374151;">Votre projet <strong>${project}</strong> m'intéresse et j'ai hâte d'en discuter avec vous.</p>` : ""}
               <p style="font-size: 14px; line-height: 1.7; color: #374151;">
                 À très bientôt,<br/>
-                <strong>Benewende</strong><br/>
-                <span style="color: #6b7280;">Développeur Full Stack</span>
+                <strong>L'équipe OpenBaara</strong><br/>
+                <span style="color: #6b7280;">Agence digitale · Web, App, IA Agentic, E-commerce, Cours</span>
               </p>
               <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
               <p style="font-size: 12px; color: #9ca3af; text-align: center;">
-                <a href="https://benewende.dev" style="color: #0066FF; text-decoration: none;">benewende.dev</a> &bull; Ouagadougou, Burkina Faso
+                <a href="https://benewende.dev" style="color: #0066FF; text-decoration: none;">openbaara.dev</a> &bull; Ouagadougou, Burkina Faso
               </p>
             </div>
           </div>`,

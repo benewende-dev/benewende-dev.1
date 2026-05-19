@@ -2,21 +2,22 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowDown, MessageCircle, Rocket } from "lucide-react";
+import { ArrowDown, MessageCircle, Rocket, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 const defaultTypingTexts = [
-  "des entreprises tech ambitieuses",
-  "des solutions IA pour l'Afrique",
-  "des SaaS qui transforment des industries",
-  "des équipes et des produits durables",
+  "des sites e-commerce qui convertissent",
+  "des applications mobiles qui scalent",
+  "des logiciels métier sur mesure",
+  "des agents IA autonomes",
+  "des formations qui forment vos équipes",
 ];
 
-const stats = [
-  { value: "3", label: " Ventures actives" },
+const defaultStats = [
   { value: "25+", label: "Projets livrés" },
-  { value: "Ouaga", label: "Base opérationnelle" },
+  { value: "6", label: "Pôles d'expertise" },
+  { value: "100%", label: "Sur mesure" },
 ];
 
 interface HeroSettings {
@@ -24,6 +25,9 @@ interface HeroSettings {
   subtitle?: string;
   typingTexts?: string[];
   available?: boolean;
+  availableText?: string;
+  stats?: { value: string; label: string }[];
+  badge?: string;
 }
 
 const DEFAULT_WHATSAPP = "2250708454592";
@@ -47,8 +51,13 @@ export default function Hero() {
 
   const typingTexts = heroSettings.typingTexts?.length ? heroSettings.typingTexts : defaultTypingTexts;
   const isAvailable = heroSettings.available !== undefined ? heroSettings.available : true;
-  const heroTitle = heroSettings.title || "Je crée";
-  const heroSubtitle = heroSettings.subtitle || "Fondateur @ OpenBaara Corp \u00b7 Développeur Full Stack \u00b7 Builder IA"
+  const availableText = heroSettings.availableText || (isAvailable ? "Nouveaux projets ouverts" : "Carnet de commandes plein");
+  const heroTitle = heroSettings.title || "Nous construisons";
+  const heroSubtitle =
+    heroSettings.subtitle ||
+    "OpenBaara — agence digitale full-stack basée à Ouagadougou. Web, App, Logiciel, IA Agentic, E-commerce et formations.";
+  const heroBadge = heroSettings.badge || "Agence digitale";
+  const stats = heroSettings.stats?.length ? heroSettings.stats : defaultStats;
 
   useEffect(() => {
     const text = typingTexts[currentText % typingTexts.length];
@@ -83,18 +92,28 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
+          className="flex flex-wrap items-center justify-center gap-2 mb-6"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.15 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            {heroBadge}
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-500/30 bg-green-500/10 text-green-500 text-sm font-medium mb-8"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-500/30 bg-green-500/10 text-green-500 text-sm font-medium"
           >
             <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
             </span>
-            {isAvailable ? "Disponible pour projets" : "Actuellement en mission"}
+            {availableText}
           </motion.div>
         </motion.div>
 
@@ -126,18 +145,22 @@ export default function Hero() {
           transition={{ delay: 0.7, duration: 0.6 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
         >
-          <Link href="/dashboard">
+          <Link href="#contact">
             <Button size="lg" className="gap-2 text-base px-8">
               <Rocket className="h-5 w-5" />
               Démarrer un projet
             </Button>
           </Link>
-          <a href="#projets">
+          <a href="#services">
             <Button size="lg" variant="outline" className="gap-2 text-base px-8">
-              Voir mes projets
+              Découvrir nos services
             </Button>
           </a>
-          <a href={`https://wa.me/${whatsappNum}?text=${encodeURIComponent("Bonjour, je suis intéressé par vos services de développement.")}`} target="_blank" rel="noopener noreferrer">
+          <a
+            href={`https://wa.me/${whatsappNum}?text=${encodeURIComponent("Bonjour OpenBaara, je souhaite discuter d'un projet.")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Button size="lg" variant="outline" className="gap-2 text-base px-8 text-[#25D366] border-[#25D366] hover:bg-[#25D366]/10">
               <MessageCircle className="h-5 w-5" />
               WhatsApp

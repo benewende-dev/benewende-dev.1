@@ -24,6 +24,8 @@ model User {
   resetToken     String?         @unique
   cvDocuments    CVDocument[]
   clientProjects ClientProject[]
+  enrollments    Enrollment[]
+  purchases      ProductPurchase[]
 }
 
 model ContactMessage {
@@ -227,4 +229,78 @@ model ProjectUpdate {
   attachmentName  String?
   createdAt       DateTime      @default(now())
   clientProject   ClientProject @relation(fields: [clientProjectId], references: [id], onDelete: Cascade)
+}
+
+model Course {
+  id              String       @id @default(cuid())
+  slug            String       @unique
+  title           String
+  subtitle        String       @default("")
+  description     String
+  longDescription String?
+  image           String       @default("/projects/placeholder.png")
+  level           String       @default("debutant")
+  duration        String       @default("")
+  language        String       @default("Français")
+  instructorName  String       @default("OpenBaara")
+  priceXOF        String
+  priceEUR        String
+  priceUSD        String
+  amountXOF       Int          @default(0)
+  modules         String       @default("[]")
+  tags            String       @default("[]")
+  status          String       @default("published")
+  featured        Boolean      @default(false)
+  visible         Boolean      @default(true)
+  sortOrder       Int          @default(0)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  enrollments     Enrollment[]
+}
+
+model Enrollment {
+  id            String   @id @default(cuid())
+  userId        String
+  courseId      String
+  transactionId String?  @unique
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+}
+
+model DigitalProduct {
+  id              String            @id @default(cuid())
+  slug            String            @unique
+  title           String
+  description     String
+  longDescription String?
+  image           String            @default("/projects/placeholder.png")
+  category        String            @default("template")
+  priceXOF        String
+  priceEUR        String
+  priceUSD        String
+  amountXOF       Int               @default(0)
+  fileUrl         String?
+  demoUrl         String?
+  tags            String            @default("[]")
+  featured        Boolean           @default(false)
+  visible         Boolean           @default(true)
+  sortOrder       Int               @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  purchases       ProductPurchase[]
+}
+
+model ProductPurchase {
+  id            String         @id @default(cuid())
+  userId        String
+  productId     String
+  transactionId String?        @unique
+  status        String         @default("pending")
+  createdAt     DateTime       @default(now())
+  product       DigitalProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

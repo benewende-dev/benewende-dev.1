@@ -117,7 +117,7 @@ export default function Pricing() {
   };
 
   return (
-    <section id="services" className="py-24 relative">
+    <section id="tarifs" className="py-24 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -126,14 +126,14 @@ export default function Pricing() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <Badge variant="outline" className="mb-4">Services & Tarifs</Badge>
+          <Badge variant="outline" className="mb-4">Tarifs & Formules</Badge>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Des solutions sur mesure,{" "}
-            <span className="gradient-text">des prix transparents</span>
+            Des prix{" "}
+            <span className="gradient-text">transparents</span> pour chaque projet
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Choisissez le service adapt&eacute; &agrave; vos besoins. Chaque formule inclut un accompagnement
-            personnalis&eacute; de la conception au d&eacute;ploiement.
+            Cliquez sur une cat&eacute;gorie pour d&eacute;ployer les formules. Chaque
+            offre inclut un accompagnement personnalis&eacute; de la conception au d&eacute;ploiement.
           </p>
         </motion.div>
 

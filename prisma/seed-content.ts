@@ -183,12 +183,213 @@ async function main() {
   if (settingCount === 0) {
     await prisma.siteSetting.createMany({
       data: [
-        { id: "hero", value: JSON.stringify({ title: "Je cr\u00e9e", typingTexts: ["des SaaS qui r\u00e9solvent de vrais probl\u00e8mes", "des applications web performantes", "des solutions IA innovantes", "des exp\u00e9riences digitales premium"], subtitle: "D\u00e9veloppeur Full Stack & Cr\u00e9ateur de SaaS bas\u00e9 \u00e0 Ouagadougou. Je transforme vos id\u00e9es en produits digitaux performants.", available: true, availableText: "Disponible pour nouveaux projets", stats: [{value: "12+", label: "Projets livr\u00e9s"}, {value: "50K+", label: "Lignes de code"}, {value: "95%", label: "Satisfaction"}] }) },
-        { id: "site", value: JSON.stringify({ name: "Benewende.dev", email: "contact@benewende.dev", phone: "+226 70 00 00 00", location: "Ouagadougou, Burkina Faso", github: "https://github.com/benewende", linkedin: "https://linkedin.com/in/benewende", twitter: "https://twitter.com/benewende" }) },
-        { id: "footer", value: JSON.stringify({ copyright: "\u00a9 2026 Benewende.dev. Tous droits r\u00e9serv\u00e9s.", tagline: "D\u00e9veloppeur Full Stack & Cr\u00e9ateur de SaaS" }) },
+        {
+          id: "hero",
+          value: JSON.stringify({
+            title: "Nous construisons",
+            badge: "Agence digitale",
+            typingTexts: [
+              "des sites e-commerce qui convertissent",
+              "des applications mobiles qui scalent",
+              "des logiciels m\u00e9tier sur mesure",
+              "des agents IA autonomes",
+              "des formations qui forment vos \u00e9quipes",
+            ],
+            subtitle:
+              "OpenBaara \u2014 agence digitale full-stack bas\u00e9e \u00e0 Ouagadougou. Web, App, Logiciel, IA Agentic, E-commerce et formations.",
+            available: true,
+            availableText: "Nouveaux projets ouverts",
+            stats: [
+              { value: "25+", label: "Projets livr\u00e9s" },
+              { value: "6", label: "P\u00f4les d'expertise" },
+              { value: "100%", label: "Sur mesure" },
+            ],
+          }),
+        },
+        {
+          id: "site",
+          value: JSON.stringify({
+            name: "OpenBaara",
+            email: "contact@openbaara.dev",
+            phone: "+226 07 26 71 19",
+            whatsapp: "2250708454592",
+            location: "Ouagadougou, Burkina Faso",
+            github: "https://github.com/benewende",
+            linkedin: "https://linkedin.com/in/benewende",
+            twitter: "https://x.com/benewende",
+          }),
+        },
+        {
+          id: "footer",
+          value: JSON.stringify({
+            copyright: "\u00a9 2026 OpenBaara \u00b7 Benewende.dev. Tous droits r\u00e9serv\u00e9s.",
+            tagline: "Web \u00b7 App \u00b7 Logiciel \u00b7 IA Agentic \u00b7 E-commerce \u00b7 Cours",
+            description:
+              "Agence digitale full-stack : Web, App, Logiciel, IA Agentic, E-commerce et formations. Bas\u00e9e \u00e0 Ouagadougou.",
+          }),
+        },
       ],
     });
     console.log("  \u2713 Site settings seeded");
+  }
+
+  // Seed Courses
+  const courseCount = await prisma.course.count();
+  if (courseCount === 0) {
+    await prisma.course.createMany({
+      data: [
+        {
+          slug: "nextjs-saas-zero-to-launch",
+          title: "Next.js SaaS : de z\u00e9ro au lancement",
+          subtitle: "Construire un SaaS production-ready en 6 semaines",
+          description:
+            "Apprenez \u00e0 construire, d\u00e9ployer et monetiser une plateforme SaaS compl\u00e8te avec Next.js, Prisma et Stripe.",
+          longDescription:
+            "Cette formation intensive vous guide pas \u00e0 pas dans la cr\u00e9ation d'un SaaS rentable : architecture, auth, base de donn\u00e9es, paiement, d\u00e9ploiement et marketing. \u00c0 la fin, vous lancez VOTRE produit.",
+          image: "/projects/placeholder.png",
+          level: "intermediaire",
+          duration: "6 semaines \u00b7 24h de contenu",
+          language: "Fran\u00e7ais",
+          instructorName: "Benewende",
+          priceXOF: "150 000 FCFA",
+          priceEUR: "250\u20ac",
+          priceUSD: "$270",
+          amountXOF: 150000,
+          modules: JSON.stringify([
+            { title: "Architecture & stack", description: "Next.js App Router, Prisma, NextAuth, Tailwind.", duration: "4h" },
+            { title: "Auth & comptes utilisateurs", description: "OAuth, email/password, gestion des r\u00f4les.", duration: "3h" },
+            { title: "Paiement & abonnements", description: "Stripe ou Mobile Money, webhooks, gestion plans.", duration: "4h" },
+            { title: "Dashboard & UX produit", description: "Composants, tableaux, animations Framer Motion.", duration: "5h" },
+            { title: "D\u00e9ploiement & monitoring", description: "Vercel/Railway, logs, alerting.", duration: "4h" },
+            { title: "Go-to-market", description: "Landing, SEO, growth, premiers utilisateurs.", duration: "4h" },
+          ]),
+          tags: JSON.stringify(["Next.js", "SaaS", "Prisma", "Stripe", "TypeScript"]),
+          status: "published",
+          featured: true,
+          sortOrder: 0,
+        },
+        {
+          slug: "ia-agentic-pour-developpeurs",
+          title: "IA Agentic pour d\u00e9veloppeurs",
+          subtitle: "Construire des agents autonomes avec LLM, RAG et MCP",
+          description:
+            "Construisez des agents IA capables d'utiliser des outils, d'appeler des API et d'ex\u00e9cuter des t\u00e2ches complexes.",
+          longDescription:
+            "Une plong\u00e9e pratique dans l'IA Agentic : architecture d'agents, RAG, tool use, MCP, m\u00e9moire, orchestration et \u00e9valuation. Vous construirez 3 agents production-ready.",
+          image: "/projects/placeholder.png",
+          level: "avance",
+          duration: "5 semaines \u00b7 20h de contenu",
+          language: "Fran\u00e7ais",
+          instructorName: "Benewende",
+          priceXOF: "200 000 FCFA",
+          priceEUR: "320\u20ac",
+          priceUSD: "$350",
+          amountXOF: 200000,
+          modules: JSON.stringify([
+            { title: "Fondamentaux LLM & API", description: "Anthropic, OpenRouter, prompting structur\u00e9.", duration: "3h" },
+            { title: "Tool use & function calling", description: "Donner des outils \u00e0 votre agent.", duration: "4h" },
+            { title: "RAG production-ready", description: "Vectorisation, recherche hybride, citations.", duration: "4h" },
+            { title: "MCP & int\u00e9grations", description: "Connecter l'agent \u00e0 vos syst\u00e8mes.", duration: "4h" },
+            { title: "M\u00e9moire & orchestration", description: "Long-running tasks, multi-agents.", duration: "5h" },
+          ]),
+          tags: JSON.stringify(["LLM", "Agents", "RAG", "MCP", "Python", "TypeScript"]),
+          status: "published",
+          featured: true,
+          sortOrder: 1,
+        },
+        {
+          slug: "ecommerce-mobile-money-afrique",
+          title: "E-commerce & Mobile Money en Afrique",
+          subtitle: "Lancer une boutique rentable adapt\u00e9e au march\u00e9 africain",
+          description:
+            "Strat\u00e9gie, mise en place, paiement Mobile Money (CinetPay, Wave) et marketing pour vendre en ligne en Afrique de l'Ouest.",
+          longDescription:
+            "Tout ce qu'il faut pour lancer une boutique en ligne qui vend r\u00e9ellement sur le march\u00e9 africain : choix techno, paiement Mobile Money, logistique, photos produits, ads.",
+          image: "/projects/placeholder.png",
+          level: "debutant",
+          duration: "4 semaines \u00b7 12h de contenu",
+          language: "Fran\u00e7ais",
+          instructorName: "OpenBaara",
+          priceXOF: "75 000 FCFA",
+          priceEUR: "125\u20ac",
+          priceUSD: "$135",
+          amountXOF: 75000,
+          modules: JSON.stringify([
+            { title: "Choisir sa plateforme", description: "Shopify, WooCommerce, sur mesure.", duration: "2h" },
+            { title: "Catalogue & photos produits", description: "Fiches qui vendent.", duration: "3h" },
+            { title: "Mobile Money & paiement", description: "CinetPay, Wave, Orange Money.", duration: "3h" },
+            { title: "Logistique & livraison", description: "Partenaires, retours, SAV.", duration: "2h" },
+            { title: "Marketing & ads", description: "WhatsApp, TikTok, Meta Ads, SEO local.", duration: "2h" },
+          ]),
+          tags: JSON.stringify(["E-commerce", "Mobile Money", "Shopify", "Afrique", "Marketing"]),
+          status: "coming-soon",
+          featured: false,
+          sortOrder: 2,
+        },
+      ],
+    });
+    console.log("  \u2713 Courses seeded");
+  }
+
+  // Seed Digital Products
+  const productCount = await prisma.digitalProduct.count();
+  if (productCount === 0) {
+    await prisma.digitalProduct.createMany({
+      data: [
+        {
+          slug: "nextjs-saas-starter-kit",
+          title: "Next.js SaaS Starter Kit",
+          description:
+            "Template Next.js 14 production-ready : auth, Prisma, Stripe, dashboard, dark mode.",
+          longDescription:
+            "Boilerplate complet pour d\u00e9marrer un SaaS en 1 journ\u00e9e : NextAuth + OAuth, Prisma + Postgres, Stripe + webhooks, dashboard utilisateur, admin, dark mode, Tailwind + shadcn/ui. Code propre, document\u00e9, pr\u00eat \u00e0 d\u00e9ployer sur Vercel ou Railway.",
+          image: "/projects/placeholder.png",
+          category: "template",
+          priceXOF: "35 000 FCFA",
+          priceEUR: "59\u20ac",
+          priceUSD: "$65",
+          amountXOF: 35000,
+          tags: JSON.stringify(["Next.js", "TypeScript", "Prisma", "Stripe", "SaaS"]),
+          featured: true,
+          sortOrder: 0,
+        },
+        {
+          slug: "pack-agents-ia-n8n",
+          title: "Pack 12 agents IA n8n",
+          description:
+            "12 workflows n8n pr\u00eats \u00e0 l'emploi : support, lead, RAG, scraping, social, email.",
+          longDescription:
+            "Une collection cur\u00e9e de 12 workflows n8n avec agents IA int\u00e9gr\u00e9s : assistant support client, qualification de leads, scraping intelligent, RAG sur Notion, automation r\u00e9seaux sociaux, email triage, et plus. Import direct, documentation FR incluse.",
+          image: "/projects/placeholder.png",
+          category: "script",
+          priceXOF: "25 000 FCFA",
+          priceEUR: "42\u20ac",
+          priceUSD: "$45",
+          amountXOF: 25000,
+          tags: JSON.stringify(["n8n", "IA", "Automatisation", "Agents"]),
+          featured: true,
+          sortOrder: 1,
+        },
+        {
+          slug: "shopify-theme-afro-modern",
+          title: "Th\u00e8me Shopify \u00ab Afro Modern \u00bb",
+          description:
+            "Th\u00e8me Shopify haut de gamme optimis\u00e9 pour le march\u00e9 africain et Mobile Money.",
+          longDescription:
+            "Th\u00e8me Shopify 2.0 design moderne, Core Web Vitals top, blocs sur mesure, sections pour Mobile Money / WhatsApp / livraison locale. Pens\u00e9 pour les marques africaines.",
+          image: "/projects/placeholder.png",
+          category: "template",
+          priceXOF: "45 000 FCFA",
+          priceEUR: "75\u20ac",
+          priceUSD: "$80",
+          amountXOF: 45000,
+          tags: JSON.stringify(["Shopify", "E-commerce", "Th\u00e8me", "Mobile Money"]),
+          featured: false,
+          sortOrder: 2,
+        },
+      ],
+    });
+    console.log("  \u2713 Digital products seeded");
   }
 
   console.log("\n\u2705 Content seed complete!");

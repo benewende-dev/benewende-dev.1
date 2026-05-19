@@ -21,12 +21,12 @@ interface FeatureToggles {
 }
 
 const navLinks = [
-  { href: "#services", label: "Services" },
-  { href: "#projets", label: "Projets" },
-  { href: "#competences", label: "Compétences" },
-  { href: "#process", label: "Process" },
-  { href: "#temoignages", label: "Témoignages" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#services", label: "Services" },
+  { href: "/cours", label: "Cours" },
+  { href: "/shop", label: "Shop" },
+  { href: "/#projets", label: "Projets" },
+  { href: "/#process", label: "Process" },
+  { href: "/#contact", label: "Contact" },
 ];
 
 export default function Navigation() {
@@ -82,10 +82,12 @@ export default function Navigation() {
         <div className="flex items-center justify-between h-16">
           <Link
             href="/"
-            className="text-xl font-bold tracking-tight"
+            className="text-xl font-bold tracking-tight flex items-baseline gap-1.5"
           >
-            <span className="gradient-text">Benewende</span>
-            <span className="text-muted-foreground">.dev</span>
+            <span className="gradient-text">OpenBaara</span>
+            <span className="hidden sm:inline text-[10px] uppercase tracking-widest text-muted-foreground">
+              Agency
+            </span>
           </Link>
 
           <div className="hidden md:flex items-center gap-1">

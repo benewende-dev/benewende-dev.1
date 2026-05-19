@@ -52,33 +52,35 @@ function buildFooterLinks(ft: FeatureToggles) {
   const feat = (key: keyof FeatureToggles, def: boolean) => ft[key] !== undefined ? !!ft[key] : def;
 
   const servicesLinks = [
-    { label: "Développement SaaS", href: "#services" },
-    { label: "Web App", href: "#services" },
-    { label: "Solutions IA", href: "#services" },
+    { label: "Sites Web", href: "/#services" },
+    { label: "Applications Mobiles", href: "/#services" },
+    { label: "Logiciels métier", href: "/#services" },
+    { label: "IA Agentic", href: "/#services" },
+    { label: "E-commerce", href: "/#services" },
   ];
   if (feat("cvGenerator", true)) servicesLinks.push({ label: "CV Generator", href: "/cv-generator" });
-  if (feat("converter", true)) servicesLinks.push({ label: "Convertisseur", href: "/converter" });
 
-  const ressourcesLinks = [
-    { label: "Process", href: "#process" },
-    { label: "Témoignages", href: "#temoignages" },
-    { label: "Expérience", href: "#experience" },
+  const produitsLinks = [
+    { label: "Formations", href: "/cours" },
+    { label: "Boutique digitale", href: "/shop" },
+    { label: "Process", href: "/#process" },
+    { label: "Témoignages", href: "/#temoignages" },
   ];
-  if (feat("payments", false)) ressourcesLinks.push({ label: "Paiement", href: "/payment" });
-  if (feat("card", true)) ressourcesLinks.push({ label: "Ma Carte", href: "/card" });
+  if (feat("card", true)) produitsLinks.push({ label: "Ma Carte", href: "/card" });
 
   return [
     {
       title: "Navigation",
       links: [
-        { label: "Services", href: "#services" },
-        { label: "Projets", href: "#projets" },
-        { label: "Compétences", href: "#competences" },
-        { label: "Contact", href: "#contact" },
+        { label: "Services", href: "/#services" },
+        { label: "Cours", href: "/cours" },
+        { label: "Shop", href: "/shop" },
+        { label: "Projets", href: "/#projets" },
+        { label: "Contact", href: "/#contact" },
       ],
     },
     { title: "Services", links: servicesLinks },
-    { title: "Ressources", links: ressourcesLinks },
+    { title: "Produits", links: produitsLinks },
   ];
 }
 
@@ -115,12 +117,14 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="text-xl font-bold tracking-tight">
-              <span className="gradient-text">Benewende</span>
-              <span className="text-muted-foreground">.dev</span>
+            <Link href="/" className="text-xl font-bold tracking-tight flex items-baseline gap-1.5">
+              <span className="gradient-text">OpenBaara</span>
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                Agency
+              </span>
             </Link>
             <p className="text-sm text-muted-foreground mt-3 max-w-xs">
-              {footer.description || "Développeur Full Stack & Créateur de SaaS basé à Ouagadougou, Burkina Faso."}
+              {footer.description || "Agence digitale full-stack : Web, App, Logiciel, IA Agentic, E-commerce et formations. Basée à Ouagadougou."}
             </p>
             <div className="flex gap-3 mt-4">
               {socials.map((social) => (
@@ -168,7 +172,7 @@ export default function Footer() {
 
         <div className="border-t border-border py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} {footer.copyright || "Benewende.dev. Tous droits réservés."}
+            &copy; {new Date().getFullYear()} {footer.copyright || "OpenBaara · Benewende.dev. Tous droits réservés."}
           </p>
           <p className="text-xs text-muted-foreground flex items-center gap-1">
             {footer.tagline ? footer.tagline : (<>Fait avec <Heart className="h-3 w-3 text-red-500 fill-red-500" /> à Ouagadougou</>)}
