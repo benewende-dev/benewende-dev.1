@@ -14,6 +14,8 @@ const modelMap: Record<string, string> = {
   experiences: "experienceItem",
   pricing: "pricingPlan",
   settings: "siteSetting",
+  courses: "course",
+  products: "digitalProduct",
 };
 
 function getModel(type: string) {

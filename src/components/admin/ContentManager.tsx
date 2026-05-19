@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 export interface FieldDef {
   key: string;
   label: string;
-  type: "text" | "textarea" | "number" | "select" | "json-array" | "boolean" | "json-skills" | "image" | "video";
+  type: "text" | "textarea" | "number" | "select" | "json-array" | "boolean" | "json-skills" | "json-modules" | "json-text" | "image" | "video";
   options?: { value: string; label: string }[];
   placeholder?: string;
   required?: boolean;
@@ -288,7 +288,13 @@ export default function ContentManager({
     fields.forEach((f) => {
       if (f.type === "number") defaults[f.key] = 0;
       else if (f.type === "boolean") defaults[f.key] = false;
-      else if (f.type === "json-array" || f.type === "json-skills") defaults[f.key] = "[]";
+      else if (
+        f.type === "json-array" ||
+        f.type === "json-skills" ||
+        f.type === "json-modules" ||
+        f.type === "json-text"
+      )
+        defaults[f.key] = "[]";
       else defaults[f.key] = "";
     });
     defaults.visible = true;
@@ -394,6 +400,96 @@ export default function ContentManager({
 
     if (field.type === "video") {
       return <VideoUploadField field={field} value={value as string} onChange={(url) => setData({ ...data, [field.key]: url })} />;
+    }
+
+    if (field.type === "json-modules") {
+      let modules: { title: string; description?: string; duration?: string }[] = [];
+      try {
+        modules = typeof value === "string" ? JSON.parse(value) : (value as typeof modules) || [];
+      } catch { modules = []; }
+      const update = (next: typeof modules) =>
+        setData({ ...data, [field.key]: JSON.stringify(next) });
+      return (
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+            {field.label}
+          </label>
+          <div className="space-y-2">
+            {modules.map((m, i) => (
+              <div key={i} className="p-2 rounded-md border bg-muted/20 space-y-1.5">
+                <div className="flex gap-2 items-start">
+                  <Input
+                    value={m.title}
+                    placeholder="Titre du module"
+                    onChange={(e) => {
+                      const next = [...modules];
+                      next[i] = { ...next[i], title: e.target.value };
+                      update(next);
+                    }}
+                    className="flex-1 h-8 text-xs"
+                  />
+                  <Input
+                    value={m.duration || ""}
+                    placeholder="Durée (ex: 3h)"
+                    onChange={(e) => {
+                      const next = [...modules];
+                      next[i] = { ...next[i], duration: e.target.value };
+                      update(next);
+                    }}
+                    className="w-24 h-8 text-xs"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-destructive shrink-0"
+                    onClick={() => update(modules.filter((_, j) => j !== i))}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+                <textarea
+                  value={m.description || ""}
+                  placeholder="Description (optionnel)"
+                  onChange={(e) => {
+                    const next = [...modules];
+                    next[i] = { ...next[i], description: e.target.value };
+                    update(next);
+                  }}
+                  rows={2}
+                  className="w-full rounded-md border border-input bg-background px-2 py-1 text-xs resize-y min-h-[40px]"
+                />
+              </div>
+            ))}
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs"
+              onClick={() => update([...modules, { title: "", description: "", duration: "" }])}
+            >
+              <Plus className="h-3 w-3 mr-1" /> Ajouter un module
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    if (field.type === "json-text") {
+      const stringValue = typeof value === "string" ? value : JSON.stringify(value ?? "", null, 2);
+      return (
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+            {field.label}
+          </label>
+          <textarea
+            value={stringValue}
+            onChange={(e) => setData({ ...data, [field.key]: e.target.value })}
+            placeholder={field.placeholder || '[]'}
+            rows={6}
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs font-mono resize-y min-h-[120px]"
+          />
+          <p className="text-[10px] text-muted-foreground mt-0.5">Format JSON brut (avancé)</p>
+        </div>
+      );
     }
 
     if (field.type === "json-skills") {
@@ -515,7 +611,13 @@ export default function ContentManager({
               <div
                 key={field.key}
                 className={
-                  field.type === "textarea" || field.type === "json-array" || field.type === "json-skills" || field.type === "image" || field.type === "video"
+                  field.type === "textarea" ||
+                  field.type === "json-array" ||
+                  field.type === "json-skills" ||
+                  field.type === "json-modules" ||
+                  field.type === "json-text" ||
+                  field.type === "image" ||
+                  field.type === "video"
                     ? "sm:col-span-2"
                     : ""
                 }

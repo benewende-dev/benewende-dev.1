@@ -21,6 +21,10 @@ import {
   Shield,
   ExternalLink,
   TrendingUp,
+  GraduationCap,
+  Package,
+  Download,
+  Hourglass,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -70,6 +74,36 @@ interface ClientProject {
   user: { id: string; name: string; email: string; image: string | null };
 }
 
+interface EnrollmentItem {
+  id: string;
+  status: string;
+  createdAt: string;
+  course: {
+    id: string;
+    slug: string;
+    title: string;
+    subtitle: string;
+    image: string;
+    duration: string;
+    level: string;
+  };
+}
+
+interface PurchaseItem {
+  id: string;
+  status: string;
+  createdAt: string;
+  product: {
+    id: string;
+    slug: string;
+    title: string;
+    image: string;
+    category: string;
+    fileUrl: string | null;
+    demoUrl: string | null;
+  };
+}
+
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   discovery: { label: "Découverte", color: "bg-blue-500", icon: Target },
   design: { label: "Design", color: "bg-purple-500", icon: Zap },
@@ -102,6 +136,8 @@ export default function DashboardPage() {
   const { data: session, status: authStatus } = useSession();
   const router = useRouter();
   const [projects, setProjects] = useState<ClientProject[]>([]);
+  const [enrollments, setEnrollments] = useState<EnrollmentItem[]>([]);
+  const [purchases, setPurchases] = useState<PurchaseItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -112,10 +148,14 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (authStatus !== "authenticated") return;
-    fetch("/api/dashboard/projects")
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data)) setProjects(data);
+    Promise.all([
+      fetch("/api/dashboard/projects").then((r) => (r.ok ? r.json() : [])),
+      fetch("/api/dashboard/library").then((r) => (r.ok ? r.json() : { enrollments: [], purchases: [] })),
+    ])
+      .then(([projectsData, library]) => {
+        if (Array.isArray(projectsData)) setProjects(projectsData);
+        if (library?.enrollments) setEnrollments(library.enrollments);
+        if (library?.purchases) setPurchases(library.purchases);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -152,7 +192,7 @@ export default function DashboardPage() {
                   <LayoutDashboard className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div>
-                  <h1 className="text-sm font-bold tracking-tight">Mon Espace Client</h1>
+                  <h1 className="text-sm font-bold tracking-tight">Mon espace OpenBaara</h1>
                   <p className="text-[10px] text-muted-foreground">Bienvenue, {session.user?.name || "Client"}</p>
                 </div>
               </div>
@@ -194,21 +234,23 @@ export default function DashboardPage() {
 
         {/* Projects list */}
         {projects.length === 0 ? (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-            <div className="h-20 w-20 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-6">
-              <FolderOpen className="h-10 w-10 text-muted-foreground" />
-            </div>
-            <h2 className="text-xl font-bold mb-2">Aucun projet en cours</h2>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Vous n&apos;avez pas encore de projet. Contactez-nous pour démarrer votre prochain projet digital !
-            </p>
-            <a href="https://wa.me/2250708454592" target="_blank" rel="noopener noreferrer">
-              <Button size="lg" className="gap-2 bg-[#25D366] hover:bg-[#1da851] text-white">
-                <MessageCircle className="h-5 w-5" />
-                Démarrer un projet
-              </Button>
-            </a>
-          </motion.div>
+          enrollments.length === 0 && purchases.length === 0 ? (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
+              <div className="h-20 w-20 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-6">
+                <FolderOpen className="h-10 w-10 text-muted-foreground" />
+              </div>
+              <h2 className="text-xl font-bold mb-2">Aucun projet en cours</h2>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                Vous n&apos;avez pas encore de projet. Contactez-nous pour démarrer votre prochain projet digital !
+              </p>
+              <a href="https://wa.me/2250708454592" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" className="gap-2 bg-[#25D366] hover:bg-[#1da851] text-white">
+                  <MessageCircle className="h-5 w-5" />
+                  Démarrer un projet
+                </Button>
+              </a>
+            </motion.div>
+          ) : null
         ) : (
           <div className="space-y-6">
             <h2 className="text-lg font-bold flex items-center gap-2">
@@ -341,6 +383,178 @@ export default function DashboardPage() {
               })}
             </AnimatePresence>
           </div>
+        )}
+
+        {/* Library: cours & produits achetés */}
+        {(enrollments.length > 0 || purchases.length > 0) && (
+          <div className="mt-12 space-y-8">
+            {enrollments.length > 0 && (
+              <div>
+                <h2 className="text-lg font-bold flex items-center gap-2 mb-4">
+                  <GraduationCap className="h-5 w-5 text-amber-500" />
+                  Mes formations
+                  <Badge variant="secondary" className="text-[10px] ml-1">{enrollments.length}</Badge>
+                </h2>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {enrollments.map((e, i) => (
+                    <motion.div
+                      key={e.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.04 }}
+                    >
+                      <Link href={`/cours/${e.course.slug}`}>
+                        <Card className="h-full hover:border-primary/30 transition-all cursor-pointer overflow-hidden group">
+                          <div className="aspect-video relative bg-gradient-to-br from-amber-500/20 via-orange-500/10 to-yellow-500/10">
+                            {e.course.image && e.course.image !== "/projects/placeholder.png" ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={e.course.image} alt={e.course.title} className="absolute inset-0 w-full h-full object-cover" />
+                            ) : (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <GraduationCap className="h-10 w-10 text-amber-500/30" />
+                              </div>
+                            )}
+                            <div className="absolute top-2 right-2">
+                              {e.status === "active" ? (
+                                <Badge className="bg-emerald-500 text-white text-[10px]">
+                                  <CheckCircle2 className="h-2.5 w-2.5 mr-0.5" /> Actif
+                                </Badge>
+                              ) : (
+                                <Badge variant="secondary" className="text-[10px]">
+                                  <Hourglass className="h-2.5 w-2.5 mr-0.5" /> En attente
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          <CardContent className="p-4">
+                            <h3 className="text-sm font-semibold line-clamp-1 group-hover:text-primary transition-colors">
+                              {e.course.title}
+                            </h3>
+                            {e.course.duration && (
+                              <p className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                {e.course.duration}
+                              </p>
+                            )}
+                            <p className="text-[10px] text-muted-foreground mt-2">
+                              Inscrit le {formatDate(e.createdAt)}
+                            </p>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {purchases.length > 0 && (
+              <div>
+                <h2 className="text-lg font-bold flex items-center gap-2 mb-4">
+                  <Package className="h-5 w-5 text-emerald-500" />
+                  Mes achats digitaux
+                  <Badge variant="secondary" className="text-[10px] ml-1">{purchases.length}</Badge>
+                </h2>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {purchases.map((p, i) => (
+                    <motion.div
+                      key={p.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.04 }}
+                    >
+                      <Card className="h-full overflow-hidden group">
+                        <div className="aspect-video relative bg-gradient-to-br from-green-500/15 via-emerald-500/10 to-teal-500/10">
+                          {p.product.image && p.product.image !== "/projects/placeholder.png" ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={p.product.image} alt={p.product.title} className="absolute inset-0 w-full h-full object-cover" />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <Package className="h-10 w-10 text-green-500/30" />
+                            </div>
+                          )}
+                          <div className="absolute top-2 right-2">
+                            {p.status === "active" ? (
+                              <Badge className="bg-emerald-500 text-white text-[10px]">
+                                <CheckCircle2 className="h-2.5 w-2.5 mr-0.5" /> Payé
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary" className="text-[10px]">
+                                <Hourglass className="h-2.5 w-2.5 mr-0.5" /> En attente
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                        <CardContent className="p-4">
+                          <h3 className="text-sm font-semibold line-clamp-1">
+                            {p.product.title}
+                          </h3>
+                          <p className="text-[10px] text-muted-foreground mt-1">
+                            Acheté le {formatDate(p.createdAt)}
+                          </p>
+                          <div className="flex gap-1.5 mt-3">
+                            {p.product.fileUrl && p.status === "active" ? (
+                              <a
+                                href={p.product.fileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1"
+                              >
+                                <Button size="sm" className="w-full gap-1.5 h-8 text-xs">
+                                  <Download className="h-3 w-3" />
+                                  Télécharger
+                                </Button>
+                              </a>
+                            ) : (
+                              <Link href={`/shop/${p.product.slug}`} className="flex-1">
+                                <Button size="sm" variant="outline" className="w-full gap-1.5 h-8 text-xs">
+                                  <ExternalLink className="h-3 w-3" />
+                                  Voir
+                                </Button>
+                              </Link>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* CTA when no library content */}
+        {enrollments.length === 0 && purchases.length === 0 && projects.length === 0 && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-8">
+            <Card className="bg-gradient-to-br from-primary/5 to-primary/0 border-primary/20">
+              <CardContent className="p-6 flex flex-col sm:flex-row items-center gap-4">
+                <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <GraduationCap className="h-6 w-6 text-primary" />
+                </div>
+                <div className="flex-1 text-center sm:text-left">
+                  <h3 className="text-sm font-bold">Découvrez nos formations et la boutique</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Cours OpenBaara Academy et produits digitaux téléchargeables.
+                  </p>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <Link href="/cours">
+                    <Button size="sm" variant="outline" className="gap-1.5">
+                      <GraduationCap className="h-3.5 w-3.5" />
+                      Cours
+                    </Button>
+                  </Link>
+                  <Link href="/shop">
+                    <Button size="sm" className="gap-1.5">
+                      <Package className="h-3.5 w-3.5" />
+                      Boutique
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         )}
 
         {/* Links */}

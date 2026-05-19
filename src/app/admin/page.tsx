@@ -8,6 +8,7 @@ import {
   Users, Mail, FileText, TrendingUp, Eye, Trash2, Archive,
   LogOut, ArrowLeft, Shield, FolderOpen, Briefcase, Code2, DollarSign,
   Clock, Settings, Star, Bot, Cpu, ToggleLeft, ToggleRight,
+  GraduationCap, ShoppingBag,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ interface ContactMsg {
   createdAt: string;
 }
 
-type TabId = "overview" | "projects" | "services" | "pricing" | "skills" | "testimonials" | "experiences" | "contacts" | "settings";
+type TabId = "overview" | "projects" | "services" | "pricing" | "courses" | "products" | "skills" | "testimonials" | "experiences" | "contacts" | "settings";
 
 interface Stats { totalUsers: number; totalContacts: number; unreadContacts: number; totalCVs: number; }
 
@@ -113,6 +114,62 @@ const pricingFields: FieldDef[] = [
   { key: "visible", label: "Visible", type: "boolean" },
 ];
 
+const courseFields: FieldDef[] = [
+  { key: "title", label: "Titre", type: "text", required: true },
+  { key: "slug", label: "Slug (url, kebab-case)", type: "text", required: true, placeholder: "nextjs-saas-zero-to-launch" },
+  { key: "subtitle", label: "Sous-titre", type: "text", placeholder: "Construire un SaaS production-ready en 6 semaines" },
+  { key: "description", label: "Description courte", type: "textarea", required: true },
+  { key: "longDescription", label: "Description détaillée", type: "textarea" },
+  { key: "image", label: "Image (1280×720 PNG/WebP)", type: "image" },
+  { key: "level", label: "Niveau", type: "select", options: [
+    { value: "debutant", label: "Débutant" },
+    { value: "intermediaire", label: "Intermédiaire" },
+    { value: "avance", label: "Avancé" },
+  ] },
+  { key: "duration", label: "Durée", type: "text", placeholder: "6 semaines · 24h de contenu" },
+  { key: "language", label: "Langue", type: "text", placeholder: "Français" },
+  { key: "instructorName", label: "Instructeur", type: "text", placeholder: "OpenBaara" },
+  { key: "priceXOF", label: "Prix XOF (affichage)", type: "text", required: true, placeholder: "150 000 FCFA" },
+  { key: "priceEUR", label: "Prix EUR (affichage)", type: "text", required: true, placeholder: "250€" },
+  { key: "priceUSD", label: "Prix USD (affichage)", type: "text", required: true, placeholder: "$270" },
+  { key: "amountXOF", label: "Montant XOF pour CinetPay (entier)", type: "number", required: true, placeholder: "150000" },
+  { key: "modules", label: "Programme (modules)", type: "json-modules" },
+  { key: "tags", label: "Tags", type: "json-array" },
+  { key: "status", label: "Statut", type: "select", options: [
+    { value: "published", label: "Publié" },
+    { value: "coming-soon", label: "Bientôt (pré-inscription)" },
+    { value: "draft", label: "Brouillon" },
+  ] },
+  { key: "featured", label: "Mis en avant", type: "boolean" },
+  { key: "sortOrder", label: "Ordre", type: "number" },
+  { key: "visible", label: "Visible", type: "boolean" },
+];
+
+const productFields: FieldDef[] = [
+  { key: "title", label: "Titre", type: "text", required: true },
+  { key: "slug", label: "Slug (url, kebab-case)", type: "text", required: true, placeholder: "nextjs-saas-starter-kit" },
+  { key: "description", label: "Description courte", type: "textarea", required: true },
+  { key: "longDescription", label: "Description détaillée", type: "textarea" },
+  { key: "image", label: "Image (1280×720 PNG/WebP)", type: "image" },
+  { key: "category", label: "Catégorie", type: "select", options: [
+    { value: "template", label: "Template" },
+    { value: "script", label: "Script" },
+    { value: "preset", label: "Preset" },
+    { value: "asset", label: "Asset" },
+    { value: "other", label: "Autre" },
+  ] },
+  { key: "priceXOF", label: "Prix XOF (affichage)", type: "text", required: true, placeholder: "35 000 FCFA" },
+  { key: "priceEUR", label: "Prix EUR (affichage)", type: "text", required: true, placeholder: "59€" },
+  { key: "priceUSD", label: "Prix USD (affichage)", type: "text", required: true, placeholder: "$65" },
+  { key: "amountXOF", label: "Montant XOF pour CinetPay (entier, 0 = gratuit)", type: "number", required: true, placeholder: "35000" },
+  { key: "fileUrl", label: "URL du fichier (livré à l'achat)", type: "text", placeholder: "https://... ou /uploads/..." },
+  { key: "demoUrl", label: "URL de démo (optionnel)", type: "text" },
+  { key: "tags", label: "Tags", type: "json-array" },
+  { key: "featured", label: "Mis en avant", type: "boolean" },
+  { key: "sortOrder", label: "Ordre", type: "number" },
+  { key: "visible", label: "Visible", type: "boolean" },
+];
+
 const experienceFields: FieldDef[] = [
   { key: "period", label: "Période", type: "text", required: true, placeholder: "2024 - Présent" },
   { key: "title", label: "Titre", type: "text", required: true },
@@ -129,6 +186,8 @@ const tabs: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: "projects", label: "Projets", icon: FolderOpen },
   { id: "services", label: "Services", icon: Briefcase },
   { id: "pricing", label: "Tarifs", icon: DollarSign },
+  { id: "courses", label: "Cours", icon: GraduationCap },
+  { id: "products", label: "Boutique", icon: ShoppingBag },
   { id: "skills", label: "Compétences", icon: Code2 },
   { id: "testimonials", label: "Témoignages", icon: Star },
   { id: "experiences", label: "Expérience", icon: Clock },
@@ -145,6 +204,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [contentData, setContentData] = useState<Record<string, Record<string, unknown>[]>>({
     projects: [], services: [], pricing: [], skills: [], testimonials: [], experiences: [],
+    courses: [], products: [],
   });
   const [siteSettings, setSiteSettings] = useState<Record<string, Record<string, unknown>>>({});
 
@@ -173,7 +233,7 @@ export default function AdminDashboard() {
           ]);
           if (statsRes.ok) setStats(await statsRes.json());
           if (contactsRes.ok) setContacts(await contactsRes.json());
-          await Promise.all(["projects", "services", "pricing", "skills", "testimonials", "experiences", "settings"].map(fetchContent));
+          await Promise.all(["projects", "services", "pricing", "courses", "products", "skills", "testimonials", "experiences", "settings"].map(fetchContent));
         } catch (e) { console.error("Admin fetch error:", e); }
         finally { setLoading(false); }
       })();
@@ -443,7 +503,8 @@ export default function AdminDashboard() {
                     const items = [
                       { label: "Projets", count: contentData.projects.length, color: "bg-blue-500" },
                       { label: "Services", count: contentData.services.length, color: "bg-green-500" },
-                      { label: "Compétences", count: contentData.skills.length, color: "bg-amber-500" },
+                      { label: "Cours", count: contentData.courses.length, color: "bg-amber-500" },
+                      { label: "Boutique", count: contentData.products.length, color: "bg-emerald-500" },
                       { label: "Témoignages", count: contentData.testimonials.length, color: "bg-purple-500" },
                       { label: "Expériences", count: contentData.experiences.length, color: "bg-pink-500" },
                     ];
@@ -718,6 +779,32 @@ export default function AdminDashboard() {
               fields={pricingFields}
               items={contentData.pricing}
               {...crudFor("pricing")}
+            />
+          </motion.div>
+        )}
+
+        {/* Courses tab */}
+        {activeTab === "courses" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <ContentManager
+              title="Cours & Formations"
+              type="courses"
+              fields={courseFields}
+              items={contentData.courses}
+              {...crudFor("courses")}
+            />
+          </motion.div>
+        )}
+
+        {/* Products tab */}
+        {activeTab === "products" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <ContentManager
+              title="Boutique digitale"
+              type="products"
+              fields={productFields}
+              items={contentData.products}
+              {...crudFor("products")}
             />
           </motion.div>
         )}
