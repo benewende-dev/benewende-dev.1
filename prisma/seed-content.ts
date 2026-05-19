@@ -210,7 +210,7 @@ async function main() {
           id: "site",
           value: JSON.stringify({
             name: "OpenBaara",
-            email: "contact@openbaara.dev",
+            email: "contact@openbaara.com",
             phone: "+226 07 26 71 19",
             whatsapp: "2250708454592",
             location: "Ouagadougou, Burkina Faso",

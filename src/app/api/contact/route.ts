@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (resend) {
-      const FROM = process.env.SMTP_FROM || "OpenBaara <noreply@benewende.dev>";
+      const FROM = process.env.SMTP_FROM || "OpenBaara <noreply@openbaara.com>";
       // Notification to admin
       await resend.emails.send({
         from: FROM,
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
               </p>
               <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
               <p style="font-size: 12px; color: #9ca3af; text-align: center;">
-                <a href="https://benewende.dev" style="color: #0066FF; text-decoration: none;">openbaara.dev</a> &bull; Ouagadougou, Burkina Faso
+                <a href="https://openbaara.com" style="color: #0066FF; text-decoration: none;">openbaara.com</a> &bull; Ouagadougou, Burkina Faso
               </p>
             </div>
           </div>`,

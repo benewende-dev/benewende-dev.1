@@ -17,13 +17,13 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://benewende.dev"),
+  metadataBase: new URL("https://openbaara.com"),
   title: {
     default: "OpenBaara — Agence digitale · Web, App, IA Agentic & E-commerce",
     template: "%s | OpenBaara",
   },
   description:
-    "OpenBaara est une agence digitale qui conçoit des sites web, applications mobiles, logiciels métier, agents IA et boutiques e-commerce. Formations, produits digitaux et accompagnement sur mesure depuis Ouagadougou.",
+    "OpenBaara (openbaara.com) est une agence digitale qui conçoit des sites web, applications mobiles, logiciels métier, agents IA et boutiques e-commerce. Formations, produits digitaux et accompagnement sur mesure depuis Ouagadougou.",
   keywords: [
     "agence digitale",
     "agence web Afrique",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    url: "https://benewende.dev",
+    url: "https://openbaara.com",
     siteName: "OpenBaara",
     title: "OpenBaara — Agence digitale · Web, App, IA Agentic & E-commerce",
     description:

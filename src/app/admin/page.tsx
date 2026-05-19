@@ -8,7 +8,7 @@ import {
   Users, Mail, FileText, TrendingUp, Eye, Trash2, Archive,
   LogOut, ArrowLeft, Shield, FolderOpen, Briefcase, Code2, DollarSign,
   Clock, Settings, Star, Bot, Cpu, ToggleLeft, ToggleRight,
-  GraduationCap, ShoppingBag,
+  GraduationCap, ShoppingBag, CreditCard,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ interface ContactMsg {
   createdAt: string;
 }
 
-type TabId = "overview" | "projects" | "services" | "pricing" | "courses" | "products" | "skills" | "testimonials" | "experiences" | "contacts" | "settings";
+type TabId = "overview" | "projects" | "services" | "pricing" | "courses" | "products" | "sales" | "skills" | "testimonials" | "experiences" | "contacts" | "settings";
 
 interface Stats { totalUsers: number; totalContacts: number; unreadContacts: number; totalCVs: number; }
 
@@ -188,6 +188,7 @@ const tabs: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: "pricing", label: "Tarifs", icon: DollarSign },
   { id: "courses", label: "Cours", icon: GraduationCap },
   { id: "products", label: "Boutique", icon: ShoppingBag },
+  { id: "sales", label: "Ventes", icon: CreditCard },
   { id: "skills", label: "Compétences", icon: Code2 },
   { id: "testimonials", label: "Témoignages", icon: Star },
   { id: "experiences", label: "Expérience", icon: Clock },
@@ -207,6 +208,37 @@ export default function AdminDashboard() {
     courses: [], products: [],
   });
   const [siteSettings, setSiteSettings] = useState<Record<string, Record<string, unknown>>>({});
+  const [sales, setSales] = useState<{
+    enrollments: Array<{
+      id: string;
+      status: string;
+      transactionId: string | null;
+      createdAt: string;
+      course: { id: string; title: string; slug: string };
+      user: { id: string; name: string; email: string };
+    }>;
+    purchases: Array<{
+      id: string;
+      status: string;
+      transactionId: string | null;
+      createdAt: string;
+      product: { id: string; title: string; slug: string };
+      user: { id: string; name: string; email: string };
+    }>;
+    payments: Array<{
+      id: string;
+      transactionId: string;
+      amount: number;
+      currency: string;
+      description: string;
+      status: string;
+      plan: string | null;
+      serviceType: string | null;
+      paymentMethod: string | null;
+      operator: string | null;
+      createdAt: string;
+    }>;
+  }>({ enrollments: [], purchases: [], payments: [] });
 
   const fetchContent = useCallback(async (type: string) => {
     const res = await fetch(`/api/admin/content/${type}`);
@@ -228,11 +260,14 @@ export default function AdminDashboard() {
       if ((session?.user as ExtendedUser)?.role !== "admin") { router.push("/"); return; }
       (async () => {
         try {
-          const [statsRes, contactsRes] = await Promise.all([
-            fetch("/api/admin/stats"), fetch("/api/admin/contacts"),
+          const [statsRes, contactsRes, salesRes] = await Promise.all([
+            fetch("/api/admin/stats"),
+            fetch("/api/admin/contacts"),
+            fetch("/api/admin/sales"),
           ]);
           if (statsRes.ok) setStats(await statsRes.json());
           if (contactsRes.ok) setContacts(await contactsRes.json());
+          if (salesRes.ok) setSales(await salesRes.json());
           await Promise.all(["projects", "services", "pricing", "courses", "products", "skills", "testimonials", "experiences", "settings"].map(fetchContent));
         } catch (e) { console.error("Admin fetch error:", e); }
         finally { setLoading(false); }
@@ -806,6 +841,292 @@ export default function AdminDashboard() {
               items={contentData.products}
               {...crudFor("products")}
             />
+          </motion.div>
+        )}
+
+        {/* Sales tab */}
+        {activeTab === "sales" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+            {(() => {
+              const acceptedPayments = sales.payments.filter((p) => p.status === "ACCEPTED");
+              const revenueXOF = acceptedPayments
+                .filter((p) => p.currency === "XOF")
+                .reduce((s, p) => s + p.amount, 0);
+              const cards = [
+                {
+                  label: "Inscriptions cours",
+                  value: sales.enrollments.length,
+                  active: sales.enrollments.filter((e) => e.status === "active").length,
+                  icon: GraduationCap,
+                  color: "text-amber-500",
+                  bg: "bg-amber-500/10",
+                },
+                {
+                  label: "Achats produits",
+                  value: sales.purchases.length,
+                  active: sales.purchases.filter((p) => p.status === "active").length,
+                  icon: ShoppingBag,
+                  color: "text-emerald-500",
+                  bg: "bg-emerald-500/10",
+                },
+                {
+                  label: "Paiements validés",
+                  value: acceptedPayments.length,
+                  active: sales.payments.length,
+                  icon: CreditCard,
+                  color: "text-blue-500",
+                  bg: "bg-blue-500/10",
+                },
+                {
+                  label: "Revenus XOF (validés)",
+                  value: revenueXOF.toLocaleString("fr-FR") + " FCFA",
+                  active: null,
+                  icon: DollarSign,
+                  color: "text-purple-500",
+                  bg: "bg-purple-500/10",
+                },
+              ];
+              return (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {cards.map((c) => (
+                    <Card key={c.label}>
+                      <CardContent className="p-5">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className={`h-10 w-10 rounded-lg ${c.bg} flex items-center justify-center`}>
+                            <c.icon className={`h-5 w-5 ${c.color}`} />
+                          </div>
+                        </div>
+                        <div className="text-2xl font-bold">{c.value}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {c.label}
+                          {c.active !== null && c.active !== c.value && (
+                            <span className="ml-1 opacity-70">({c.active} actifs)</span>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              );
+            })()}
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <GraduationCap className="h-4 w-4 text-amber-500" />
+                  Inscriptions aux cours
+                  <Badge variant="secondary" className="text-[10px] ml-1">
+                    {sales.enrollments.length}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {sales.enrollments.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-6">
+                    Aucune inscription pour le moment.
+                  </p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b text-xs text-muted-foreground">
+                          <th className="text-left py-2 px-2">Date</th>
+                          <th className="text-left py-2 px-2">Utilisateur</th>
+                          <th className="text-left py-2 px-2">Cours</th>
+                          <th className="text-left py-2 px-2">Transaction</th>
+                          <th className="text-left py-2 px-2">Statut</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sales.enrollments.map((e) => (
+                          <tr key={e.id} className="border-b last:border-0">
+                            <td className="py-2.5 px-2 text-xs text-muted-foreground">
+                              {new Date(e.createdAt).toLocaleDateString("fr-FR", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </td>
+                            <td className="py-2.5 px-2">
+                              <div className="text-xs font-medium">{e.user.name}</div>
+                              <div className="text-[10px] text-muted-foreground">
+                                {e.user.email}
+                              </div>
+                            </td>
+                            <td className="py-2.5 px-2 text-xs">{e.course.title}</td>
+                            <td className="py-2.5 px-2">
+                              <code className="text-[10px] bg-muted px-1.5 py-0.5 rounded">
+                                {e.transactionId || "—"}
+                              </code>
+                            </td>
+                            <td className="py-2.5 px-2">
+                              <Badge
+                                className={`text-[10px] ${
+                                  e.status === "active"
+                                    ? "bg-emerald-500 hover:bg-emerald-600"
+                                    : ""
+                                }`}
+                                variant={e.status === "active" ? "default" : "secondary"}
+                              >
+                                {e.status === "active" ? "Actif" : "En attente"}
+                              </Badge>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <ShoppingBag className="h-4 w-4 text-emerald-500" />
+                  Achats boutique
+                  <Badge variant="secondary" className="text-[10px] ml-1">
+                    {sales.purchases.length}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {sales.purchases.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-6">
+                    Aucun achat pour le moment.
+                  </p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b text-xs text-muted-foreground">
+                          <th className="text-left py-2 px-2">Date</th>
+                          <th className="text-left py-2 px-2">Utilisateur</th>
+                          <th className="text-left py-2 px-2">Produit</th>
+                          <th className="text-left py-2 px-2">Transaction</th>
+                          <th className="text-left py-2 px-2">Statut</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sales.purchases.map((p) => (
+                          <tr key={p.id} className="border-b last:border-0">
+                            <td className="py-2.5 px-2 text-xs text-muted-foreground">
+                              {new Date(p.createdAt).toLocaleDateString("fr-FR", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </td>
+                            <td className="py-2.5 px-2">
+                              <div className="text-xs font-medium">{p.user.name}</div>
+                              <div className="text-[10px] text-muted-foreground">
+                                {p.user.email}
+                              </div>
+                            </td>
+                            <td className="py-2.5 px-2 text-xs">{p.product.title}</td>
+                            <td className="py-2.5 px-2">
+                              <code className="text-[10px] bg-muted px-1.5 py-0.5 rounded">
+                                {p.transactionId || "—"}
+                              </code>
+                            </td>
+                            <td className="py-2.5 px-2">
+                              <Badge
+                                className={`text-[10px] ${
+                                  p.status === "active"
+                                    ? "bg-emerald-500 hover:bg-emerald-600"
+                                    : ""
+                                }`}
+                                variant={p.status === "active" ? "default" : "secondary"}
+                              >
+                                {p.status === "active" ? "Payé" : "En attente"}
+                              </Badge>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <CreditCard className="h-4 w-4 text-blue-500" />
+                  Paiements CinetPay
+                  <Badge variant="secondary" className="text-[10px] ml-1">
+                    {sales.payments.length}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {sales.payments.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-6">
+                    Aucun paiement pour le moment.
+                  </p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b text-xs text-muted-foreground">
+                          <th className="text-left py-2 px-2">Date</th>
+                          <th className="text-left py-2 px-2">Transaction</th>
+                          <th className="text-left py-2 px-2">Description</th>
+                          <th className="text-left py-2 px-2">Méthode</th>
+                          <th className="text-right py-2 px-2">Montant</th>
+                          <th className="text-left py-2 px-2">Statut</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sales.payments.map((p) => (
+                          <tr key={p.id} className="border-b last:border-0">
+                            <td className="py-2.5 px-2 text-xs text-muted-foreground">
+                              {new Date(p.createdAt).toLocaleDateString("fr-FR", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </td>
+                            <td className="py-2.5 px-2">
+                              <code className="text-[10px] bg-muted px-1.5 py-0.5 rounded">
+                                {p.transactionId}
+                              </code>
+                            </td>
+                            <td className="py-2.5 px-2 text-xs max-w-[260px] truncate">
+                              {p.description}
+                            </td>
+                            <td className="py-2.5 px-2 text-xs text-muted-foreground">
+                              {p.paymentMethod || "—"}
+                              {p.operator && <span className="ml-1 opacity-70">({p.operator})</span>}
+                            </td>
+                            <td className="py-2.5 px-2 text-xs font-medium text-right">
+                              {p.amount.toLocaleString("fr-FR")} {p.currency}
+                            </td>
+                            <td className="py-2.5 px-2">
+                              <Badge
+                                className={`text-[10px] ${
+                                  p.status === "ACCEPTED"
+                                    ? "bg-emerald-500 hover:bg-emerald-600"
+                                    : p.status === "REFUSED" || p.status === "CANCELLED"
+                                    ? "bg-destructive hover:bg-destructive/90"
+                                    : ""
+                                }`}
+                                variant={p.status === "ACCEPTED" ? "default" : "secondary"}
+                              >
+                                {p.status}
+                              </Badge>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </motion.div>
         )}
 

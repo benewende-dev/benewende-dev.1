@@ -25,6 +25,7 @@ import {
   Package,
   Download,
   Hourglass,
+  PlayCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -93,14 +94,15 @@ interface PurchaseItem {
   id: string;
   status: string;
   createdAt: string;
+  downloadUrl: string | null;
   product: {
     id: string;
     slug: string;
     title: string;
     image: string;
     category: string;
-    fileUrl: string | null;
     demoUrl: string | null;
+    hasFile: boolean;
   };
 }
 
@@ -403,7 +405,13 @@ export default function DashboardPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.04 }}
                     >
-                      <Link href={`/cours/${e.course.slug}`}>
+                      <Link
+                        href={
+                          e.status === "active"
+                            ? `/cours/${e.course.slug}/learn`
+                            : `/cours/${e.course.slug}`
+                        }
+                      >
                         <Card className="h-full hover:border-primary/30 transition-all cursor-pointer overflow-hidden group">
                           <div className="aspect-video relative bg-gradient-to-br from-amber-500/20 via-orange-500/10 to-yellow-500/10">
                             {e.course.image && e.course.image !== "/projects/placeholder.png" ? (
@@ -439,6 +447,12 @@ export default function DashboardPage() {
                             <p className="text-[10px] text-muted-foreground mt-2">
                               Inscrit le {formatDate(e.createdAt)}
                             </p>
+                            {e.status === "active" && (
+                              <Button size="sm" className="w-full gap-1.5 h-8 text-xs mt-3">
+                                <PlayCircle className="h-3 w-3" />
+                                Accéder au cours
+                              </Button>
+                            )}
                           </CardContent>
                         </Card>
                       </Link>
@@ -493,9 +507,9 @@ export default function DashboardPage() {
                             Acheté le {formatDate(p.createdAt)}
                           </p>
                           <div className="flex gap-1.5 mt-3">
-                            {p.product.fileUrl && p.status === "active" ? (
+                            {p.downloadUrl ? (
                               <a
-                                href={p.product.fileUrl}
+                                href={p.downloadUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex-1"

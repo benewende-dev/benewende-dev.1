@@ -66,9 +66,18 @@ export async function GET() {
       status: p.status,
       createdAt: p.createdAt,
       product: {
-        ...p.product,
-        fileUrl: p.status === "active" ? p.product.fileUrl : null,
+        id: p.product.id,
+        slug: p.product.slug,
+        title: p.product.title,
+        image: p.product.image,
+        category: p.product.category,
+        demoUrl: p.product.demoUrl,
+        hasFile: !!p.product.fileUrl,
       },
+      downloadUrl:
+        p.status === "active" && p.product.fileUrl
+          ? `/api/shop/download/${p.product.id}`
+          : null,
     })),
   });
 }
